@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>微信问题抽奖游戏机</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #2c3e50;
+            font-family: Arial, sans-serif;
+            color: white;
+        }
+
+        .slot-machine {
+            text-align: center;
+            background: #34495e;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0px 0px 20px rgba(0, 255, 255, 0.3);
+            width: 320px;
+        }
+
+        .title {
+            font-size: 26px;
+            margin-bottom: 20px;
+            color: #1abc9c;
+        }
+
+        .screen {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 120px;
+            overflow: hidden;
+            background-color: #1c2833;
+            color: #1abc9c;
+            font-size: 22px;
+            font-weight: bold;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            box-shadow: inset 0px 0px 10px rgba(255, 255, 255, 0.3);
+            transition: background-color 0.5s;
+        }
+
+        .spin-button {
+            font-size: 20px;
+            padding: 12px 25px;
+            border: none;
+            background-color: #e74c3c;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .spin-button:hover {
+            background-color: #c0392b;
+        }
+    </style>
+</head>
+<body>
+    <div class="slot-machine">
+        <div class="title">微信问题抽奖游戏机</div>
+        <div class="screen" id="screen">点击按钮抽取问题</div>
+        <button class="spin-button" onclick="spin()">开始抽奖</button>
+    </div>
+
+    <script>
+        // 问题池，可以从服务器动态获取
+        let questions = [
+            "你最喜欢的书籍是什么？",
+            "你最想去的旅游地点是哪儿？",
+            "你最敬佩的人是谁？",
+            "你最喜欢的食物是什么？",
+            "最让你难忘的经历是什么？",
+            "你理想的职业是什么？",
+            "你最喜欢的电影是什么？",
+            "如果拥有超能力，你会选择什么？"
+        ];
+
+        // 标记是否正在滚动
+        let spinning = false;
+
+        function spin() {
+            if (spinning) return;  // 防止重复点击
+            spinning = true;
+
+            const screen = document.getElementById("screen");
+            let scrollInterval;
+            let stopInterval;
+
+            // 随机滚动问题内容
+            scrollInterval = setInterval(() => {
+                const randomQuestion = questions[Math.floor(Math.random() * questions.length)];
+                screen.innerText = randomQuestion;
+            }, 75);  // 每75毫秒更新一次问题，速度更快
+
+            // 设置滚动时间 2.5秒后停止
+            setTimeout(() => {
+                clearInterval(scrollInterval);
+
+                // 最后停在一个随机的问题
+                const finalQuestion = questions[Math.floor(Math.random() * questions.length)];
+                screen.innerText = finalQuestion;
+                screen.style.backgroundColor = "#000000";  // 最终背景色变化
+                spinning = false;  // 允许重新抽奖
+            }, 2500);  // 2.5秒后停止
+        }
+
+        // 模拟从服务器获取问题池
+        function updateQuestions(newQuestions) {
+            questions = newQuestions;
+        }
+
+        // 示例：动态更新问题池
+        updateQuestions([
+            "最喜欢的音乐类型是什么？",
+            "你如何定义成功？",
+            "最想完成的一个梦想是什么？",
+            "如果可以瞬间学会一项技能，你想学什么？",
+            "最近的心愿是什么？"
+        ]);
+    </script>
+</body>
+</html>
