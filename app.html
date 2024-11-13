@@ -3,127 +3,217 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>微信问题抽奖游戏机</title>
+    <title>农大今天吃什么？</title>
     <style>
         body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
             display: flex;
             justify-content: center;
             align-items: center;
+            flex-direction: column;
             height: 100vh;
-            background-color: #2c3e50;
-            font-family: Arial, sans-serif;
-            color: white;
-        }
-
-        .slot-machine {
-            text-align: center;
-            background: #34495e;
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0px 0px 20px rgba(0, 255, 255, 0.3);
-            width: 320px;
+            margin: 0;
+            padding: 20px;
         }
 
         .title {
-            font-size: 26px;
+            font-size: 24px;
+            text-align: center;
             margin-bottom: 20px;
-            color: #1abc9c;
+            color: #34495e;
         }
 
-        .screen {
+        .container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 10px;
+            width: 300px;
+            height: 300px;
+            background-color: #fff;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .cell {
+            background-color: #65190f;
+            color: white;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 120px;
-            overflow: hidden;
-            background-color: #1c2833;
-            color: #1abc9c;
-            font-size: 22px;
-            font-weight: bold;
-            border-radius: 8px;
-            margin-bottom: 25px;
-            box-shadow: inset 0px 0px 10px rgba(255, 255, 255, 0.3);
-            transition: background-color 0.5s;
-        }
-
-        .spin-button {
-            font-size: 20px;
-            padding: 12px 25px;
-            border: none;
-            background-color: #e74c3c;
-            color: white;
+            font-size: 18px;
             border-radius: 8px;
             cursor: pointer;
+            transition: transform 0.3s, background-color 0.3s;
+            opacity: 1;
+            position: relative;
+        }
+
+        .cell:hover {
+            transform: scale(1.1);
+            background-color: #e3d874;
+        }
+
+        .cell:active {
+            transform: scale(0.95);
+        }
+
+        .blink {
+            animation: blink 0.3s infinite alternate;
+        }
+
+        @keyframes blink {
+            0% { background-color: #eeac55; }
+            50% { background-color: #f39c12; }
+            100% { background-color: #c03f2b; }
+        }
+
+        .actions {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .actions button {
+            background-color: rgb(248, 166, 204);
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
             transition: background-color 0.3s;
         }
 
-        .spin-button:hover {
-            background-color: #c0392b;
+        .actions button:hover {
+            background-color: #e462a6;
+        }
+
+        #suggestions {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        #suggestions input, #suggestions textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .like-count {
+            font-size: 18px;
+            margin-top: 10px;
+        }
+
+        #suggestions button {
+            background-color: #65190f;
+            color: white;
         }
     </style>
 </head>
 <body>
-    <div class="slot-machine">
-        <div class="title">微信问题抽奖游戏机</div>
-        <div class="screen" id="screen">点击按钮抽取问题</div>
-        <button class="spin-button" onclick="spin()">开始抽奖</button>
+
+    <div class="title">今天就去这___吃吧！</div>
+
+    <div class="container">
+        <div class="cell" onclick="startSelection(0)">北三</div>
+        <div class="cell" onclick="startSelection(1)">北四</div>
+        <div class="cell" onclick="startSelection(2)">南一</div>
+        <div class="cell" onclick="startSelection(3)">食街</div>
+        <div class="cell" id="center-cell" onclick="selectCenter()">随机</div>
+        <div class="cell" onclick="startSelection(5)">外卖</div>
+        <div class="cell" onclick="startSelection(6)">面园</div>
+        <div class="cell" onclick="startSelection(7)">棘园</div>
+        <div class="cell" onclick="startSelection(8)">饺子园</div>
+    </div>
+
+    <div class="actions">
+        <button id="like-button" onclick="like()">👍 点赞</button>
+        <span class="like-count" id="like-count">点赞数: 0</span>
+    </div>
+
+    <div id="suggestions">
+        <!-- <input type="text" id="suggestion-title" placeholder="您的建议标题"> -->
+        <textarea id="suggestion-content" placeholder="请输入您的建议..." rows="4"></textarea>
+        <button onclick="submitSuggestion()">提交建议</button>
     </div>
 
     <script>
-        // 问题池，可以从服务器动态获取
-        let questions = [
-            "你最喜欢的书籍是什么？",
-            "你最想去的旅游地点是哪儿？",
-            "你最敬佩的人是谁？",
-            "你最喜欢的食物是什么？",
-            "最让你难忘的经历是什么？",
-            "你理想的职业是什么？",
-            "你最喜欢的电影是什么？",
-            "如果拥有超能力，你会选择什么？"
+        let urls = [
+            "lottery.html?slot=0",
+            "lottery.html?slot=1",
+            "lottery.html?slot=2",
+            "lottery.html?slot=3",
+            "lottery.html?slot=4",
+            "lottery.html?slot=5",
+            "lottery.html?slot=6",
+            "lottery.html?slot=7",
+            "lottery.html?slot=8"
         ];
 
-        // 标记是否正在滚动
-        let spinning = false;
+        let likeCount = 0;
 
-        function spin() {
-            if (spinning) return;  // 防止重复点击
-            spinning = true;
+        function selectCenter() {
+            let options = [0, 1, 2, 3, 5, 6, 7, 8]; // 排除中间格
+            let cells = document.querySelectorAll('.cell');
+            let blinkInterval = 100; // 闪烁间隔
 
-            const screen = document.getElementById("screen");
-            let scrollInterval;
-            let stopInterval;
+            // 依次闪烁格子
+            let current = 0;
+            let blinkTimer = setInterval(() => {
+                // 清除闪烁效果
+                cells.forEach(cell => cell.classList.remove('blink'));
 
-            // 随机滚动问题内容
-            scrollInterval = setInterval(() => {
-                const randomQuestion = questions[Math.floor(Math.random() * questions.length)];
-                screen.innerText = randomQuestion;
-            }, 75);  // 每75毫秒更新一次问题，速度更快
+                // 添加当前格子的闪烁效果
+                cells[options[current]].classList.add('blink');
+                current++;
 
-            // 设置滚动时间 2.5秒后停止
-            setTimeout(() => {
-                clearInterval(scrollInterval);
-
-                // 最后停在一个随机的问题
-                const finalQuestion = questions[Math.floor(Math.random() * questions.length)];
-                screen.innerText = finalQuestion;
-                screen.style.backgroundColor = "#000000";  // 最终背景色变化
-                spinning = false;  // 允许重新抽奖
-            }, 2500);  // 2.5秒后停止
+                if (current === options.length) {
+                    clearInterval(blinkTimer);
+                    setTimeout(() => {
+                        let selectedIndex = options[Math.floor(Math.random() * options.length)];
+                        // 停止闪烁
+                        cells.forEach(cell => cell.classList.remove('blink'));
+                        // 跳转到选中的页面
+                        window.location.href = urls[selectedIndex];
+                    }, 500); // 停留 500ms 后跳转
+                }
+            }, blinkInterval);
         }
 
-        // 模拟从服务器获取问题池
-        function updateQuestions(newQuestions) {
-            questions = newQuestions;
+        function startSelection(index) {
+            alert('请点击中间格进行抽选!');
         }
 
-        // 示例：动态更新问题池
-        updateQuestions([
-            "最喜欢的音乐类型是什么？",
-            "你如何定义成功？",
-            "最想完成的一个梦想是什么？",
-            "如果可以瞬间学会一项技能，你想学什么？",
-            "最近的心愿是什么？"
-        ]);
+        // 点赞功能
+        function like() {
+            likeCount++;
+            document.getElementById('like-count').innerText = '点赞数: ' + likeCount;
+        }
+
+        // 提交建议
+        function submitSuggestion() {
+            let title = document.getElementById('suggestion-title').value;
+            let content = document.getElementById('suggestion-content').value;
+
+            if (title && content) {
+                // 假设提交成功后
+                alert('感谢您的建议！');
+                // 清空输入框
+                document.getElementById('suggestion-title').value = '';
+                document.getElementById('suggestion-content').value = '';
+            } else {
+                alert('请填写完整的建议内容！');
+            }
+        }
     </script>
+
 </body>
 </html>
+
+
+
