@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>最终抉择</title>
+        <style>
+            body {
+                font-family: 'Arial', sans-serif;
+                background-color: #f0f0f0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                height: 100vh;
+                margin: 0;
+                padding: 20px;
+            }
+    
+            .title {
+                font-size: 28px;
+                text-align: center;
+                margin-bottom: 20px;
+                color: #2c3e50;
+                font-weight: bold;
+            }
+    
+            /* 美化老虎机外观，类似游戏机 */
+            .slot-machine {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 400px;
+                height: 200px;
+                background: #e74c3c; /* 红色背景 */
+                border-radius: 15px;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* 添加阴影效果 */
+                border: 5px solid #871205; /* 金色边框 */
+                position: relative;
+                overflow: hidden;
+            }
+    
+            /* 金属质感的立体效果 */
+            .slot {
+                width: 100%;
+                height: 100%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-size: 24px;
+                background-color: #e6dedd;
+                color: white;
+                border-radius: 10px;
+                position: absolute;
+                top: 0;
+                left: 0;
+                overflow: hidden;
+                box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3); /* 内阴影，增强金属感 */
+            }
+    
+            /* 显示问题的前半部分（较大字体） */
+            .question-main {
+                font-size: 32px;
+                font-weight: bold;
+                color: #000000; /* 黑色字体 */
+                text-align: center;
+                text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5); /* 文字阴影增强立体效果 */
+                font-family: 'Impact', sans-serif; /* 艺术字字体 */
+            }
+    
+            /* 显示问题的后半部分（较小字体） */
+            .question-sub {
+                font-size: 18px;
+                color: #7f8c8d;
+                text-align: center;
+                margin-top: 10px;
+                font-family: 'Arial', sans-serif;
+            }
+    
+            .question-info {
+                margin-top: 30px;
+                text-align: center;
+            }
+    
+            .buttons {
+                margin-top: 20px;
+                text-align: center;
+            }
+    
+            .button {
+                padding: 10px 20px;
+                background-color: #ebc21c; /* 金色按钮 */
+                color: rgb(24, 3, 24);
+                border: none;
+                border-radius: 10px;
+                cursor: pointer;
+                font-size: 16px;
+                transition: background-color 0.3s;
+            }
+    
+            .button:hover {
+                background-color: #df5d12; /* 悬停时深金色 */
+            }
+    
+            .likes {
+                margin-top: 30px;
+                font-size: 18px;
+            }
+    
+            .like-button {
+                background-color: #2ecc71;
+                color: white;
+                padding: 10px 20px;
+                border: none;
+                border-radius: 10px;
+                cursor: pointer;
+                font-size: 16px;
+                transition: background-color 0.3s;
+            }
+    
+            .like-button:hover {
+                background-color: #27ae60;
+            }
+        </style>
+    </head>
+<body>
+
+    <div class="title" id="slotTitle">加载中...</div>
+
+    <div class="slot-machine">
+        <div class="slot" id="slot">
+            <!-- 显示问题 -->
+            <div class="question-main" id="questionMain">加载问题中...</div>
+            <div class="question-sub" id="questionSub">加载第二行问题...</div>
+        </div>
+    </div>
+
+    <div class="buttons">
+        <button class="button" onclick="startLottery()">命运一抽</button>
+    </div>
+
+    <script>
+        // 获取URL中的slot参数
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentSlot = parseInt(urlParams.get('slot'));
+
+        // 定义不同格子对应的题库
+
+
+        const questionPools = [
+            {
+                main: '黄焖鸡',
+                sub: '📍二楼',
+                image: 'https://example.com/image1.jpg'
+            },
+            {
+                main: '黄焖鸡',
+                sub: '📍二楼',
+                image: 'https://example.com/image2.jpg'
+            },
+            {
+                main: '黄焖鸡',
+                sub: '📍二楼',
+                image: 'https://example.com/image3.jpg'
+            },
+            {
+                main: '黄焖鸡',
+                sub: '📍二楼',
+                image: 'https://example.com/image4.jpg'
+            },
+            {
+                main: '黄焖鸡',
+                sub: '📍二楼',
+                image: 'https://example.com/image5.jpg'
+            },
+            {
+                main: '黄焖鸡',
+                sub: '📍二楼',
+                link: 'https://example.com/6',
+                image: 'https://example.com/image6.jpg'
+            },
+            {
+                main: '黄焖鸡',
+                sub: '📍二楼',
+                image: 'https://example.com/image7.jpg'
+            },
+            {
+                main: '黄焖鸡',
+                sub: '📍二楼',
+                image: 'https://example.com/image8.jpg'
+            },
+            {
+                main: '黄焖鸡',
+                sub: '📍二楼',
+                image: 'https://example.com/image9.jpg'
+            }
+        ];
+
+        // 设置老虎机的标题
+        const slotTitles = [
+            '北三', '北四', '南一', '食街', '随机', '外卖', '面园', '棘园', '饺子园'
+        ];
+
+        // 获取选中的题库
+        const currentQuestion = questionPools[currentSlot];
+
+        // 更新页面显示当前选中的格子标题
+        document.getElementById('slotTitle').innerText = slotTitles[currentSlot];
+
+        // 更新问题文本和链接（初始化时不显示）
+        document.getElementById('questionMain').innerText = '';
+        document.getElementById('questionSub').innerText = '';
+
+
+        // 启动抽奖功能，模拟老虎机效果
+        function startLottery() {
+            const slotElement = document.getElementById('slot');
+            const resultElement = document.getElementById('questionMain');
+            const subResultElement = document.getElementById('questionSub');
+            
+            // 模拟滚动效果
+            let count = 0;
+            const interval = setInterval(() => {
+                // 模拟不断变化的文本
+                resultElement.innerText = '焦急选择中';
+                subResultElement.innerText = '... ' + count;
+                count++;
+
+                if (count > 20) {
+                    clearInterval(interval);
+                    // 显示最终抽中的问题
+                    resultElement.innerText = currentQuestion.main;
+                    subResultElement.innerText = currentQuestion.sub;
+                }
+            }, 100);
+        }
+    </script>
+
+</body>
+</html>
