@@ -1,240 +1,734 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>最终抉择</title>
-        <style>
-            body {
-                font-family: 'Arial', sans-serif;
-                background-color: #dcc1c1;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                flex-direction: column;
-                height: 100vh;
-                margin: 0;
-                padding: 20px;
-            }
-    
-            .title {
-                font-size: 28px;
-                text-align: center;
-                margin-bottom: 20px;
-                color: #2c3e50;
-                font-weight: bold;
-            }
-    
-            /* 美化老虎机外观，类似游戏机 */
-            .slot-machine {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                width: 300px;
-                height: 200px;
-                background: #e74c3c; /* 红色背景 */
-                border-radius: 15px;
-                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* 添加阴影效果 */
-                border: 5px solid #871205; /* 金色边框 */
-                position: relative;
-                overflow: hidden;
-            }
-    
-            /* 金属质感的立体效果 */
-            .slot {
-                width: 100%;
-                height: 100%;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                font-size: 24px;
-                background-color: #e6dedd;
-                color: white;
-                border-radius: 10px;
-                position: absolute;
-                top: 0;
-                left: 0;
-                overflow: hidden;
-                box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3); /* 内阴影，增强金属感 */
-            }
-    
-            /* 显示问题的前半部分（较大字体） */
-            .question-main {
-                font-size: 32px;
-                font-weight: bold;
-                color: #000000; /* 黑色字体 */
-                text-align: center;
-                text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5); /* 文字阴影增强立体效果 */
-                font-family: 'Impact', sans-serif; /* 艺术字字体 */
-            }
-    
-            /* 显示问题的后半部分（较小字体） */
-            .question-sub {
-                font-size: 18px;
-                color: #7f8c8d;
-                text-align: center;
-                margin-top: 10px;
-                font-family: 'Arial', sans-serif;
-            }
-    
-            .question-info {
-                margin-top: 30px;
-                text-align: center;
-            }
-    
-            .buttons {
-                margin-top: 20px;
-                text-align: center;
-            }
-    
-            .button {
-                padding: 10px 20px;
-                background-color: #ebc21c; /* 金色按钮 */
-                color: rgb(24, 3, 24);
-                border: none;
-                border-radius: 10px;
-                cursor: pointer;
-                font-size: 16px;
-                transition: background-color 0.3s;
-            }
-    
-            .button:hover {
-                background-color: #df5d12; /* 悬停时深金色 */
-            }
-    
-            .likes {
-                margin-top: 30px;
-                font-size: 18px;
-            }
-    
-            .like-button {
-                background-color: #2ecc71;
-                color: white;
-                padding: 10px 20px;
-                border: none;
-                border-radius: 10px;
-                cursor: pointer;
-                font-size: 16px;
-                transition: background-color 0.3s;
-            }
-    
-            .like-button:hover {
-                background-color: #27ae60;
-            }
-        </style>
-    </head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>最终抉择</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #fad05b;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .bubble {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #c03f2b;
+            color: #000;
+            padding: 10px 15px;
+            border-radius: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            animation: bounce 1.5s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .slot-machine {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 350px;
+            height: 200px;
+            background: #ed8f1c; /* 红色背景 */
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            border: 5px solid #871205; /* 金色边框 */
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slot {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #000;
+            font-family: 'Impact', sans-serif;
+        }
+
+        .question-main {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .question-sub {
+            font-size: 18px;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+
+        .actions {
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .actions button {
+            background-color: #c03f2b;
+            color:  #feeeed;
+            border: 2px solid black;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+
+        .popup {
+            margin-top: 50px;
+            width:350px;
+            background-color: #faa755;
+            border: 2px solid black;
+            justify-content: center;
+            align-items: center;
+            padding:10px;
+<!--            border-radius: 8px;-->
+        }
+        .popup-title {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .popup-content {
+            font-size: 15px;
+            color: black;
+            text-indent: 2em;
+        }
+        .team{
+            text-align: right;
+        }
+        /* 美化弹窗 */
+        .pop {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            height:200px;
+            weight：200px;
+            transform: translate(-50%, -50%);
+            background: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            z-index: 999;
+            text-align: center;
+        }
+        .pop.show {
+            display: block;
+        }
+
+       .pop .pop-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+       .pop .pop-content {
+            font-size: 18px;
+            line-height: 1.5;
+            color: #7f8c8d;
+       }
+
+       .pop .pop-button {
+             margin-top: 10px;
+             padding: 10px 20px;
+             background-color: #ebc21c; /* 金色按钮 */
+             color: rgb(24, 3, 24);
+             border: none;
+             border-radius: 10px;
+             cursor: pointer;
+             font-size: 16px;
+             transition: background-color 0.3s;
+       }
+
+       .pop .pop-button:hover {
+            background-color: #df5d12;
+       }
+
+    </style>
+</head>
 <body>
 
-    <div class="title" id="slotTitle">加载中...</div>
+    <!-- 引导气泡 -->
+    <div class="bubble" onclick="alert('点击右上角按钮分享页面吧！')">
+        独乐不如众乐，分享给老铁！ →
+    </div>
 
+    <!-- 标题 -->
+    <h2 id="slotTitle">加载中...</h2>
+
+    <!-- 老虎机 -->
     <div class="slot-machine">
-        <div class="slot" id="slot">
-            <!-- 显示问题 -->
-            <div class="question-main" id="questionMain">加载问题中...</div>
-            <div class="question-sub" id="questionSub">加载第二行问题...</div>
+        <div class="slot">
+            <div class="question-main" id="questionMain">看看命运之神的安排~</div>
+            <div class="question-sub" id="questionSub">
+                <span></span>
+            </div>
         </div>
     </div>
 
-    <div class="buttons">
-        <button class="button" onclick="startLottery()">命运一抽</button>
+    <!-- 抽奖按钮 -->
+    <div class="actions">
+        <button id="like-button" onclick="startLottery()">命运一抽</button>
     </div>
+
+    <div class="popup" id="popup">
+        <div class="popup-title">亲爱的用户:</div>
+        <div class="popup-content">
+            <span>首次尝试，仍有不足，创作不易，请大家多多理解与支持!我们一定积极听取大家的建议，不断改进优化！为大家推荐东农优质美食！</span>
+            <div class="team">东农街访团队</div>
+            <div class="team">2024.11.28</div>
+        </div>
+    </div>
+
+     <div class="pop" id="pop">
+        <div class="pop-title">不好意思小主~</div>
+        <div class="pop-content" id="popContent"></div>
+        <button class="pop-button" onclick="closePopup()">关闭</button>
+     </div>
 
     <script>
         // 获取URL中的slot参数
         const urlParams = new URLSearchParams(window.location.search);
-        const currentSlot = parseInt(urlParams.get('slot'));
+        const currentSlot = parseInt(urlParams.get('slot'), 10);
+        // 定义题库
+        const questionPools = {
+            0: [
+                { main: '四川拌菜',sub: '📍一楼2号窗口'},
+                { main: '拌面藕（￥6）',sub: '📍一楼2号窗口'},
+                { main: '拌鸡架（￥9.9）',sub: '📍一楼2号窗口'},
+                { main: '减脂餐（￥7）',sub: '📍一楼2号窗口'},
+                { main: '拌面藕（￥6）',sub: '📍一楼2号窗口'},
+                { main: '酸辣粉（￥6）',sub: '📍一楼2号窗口'},
+                { main: '馄饨（￥8）',sub: '📍一楼三鲜馄饨'},
+                { main: '馄饨火鸡面（￥10）',sub: '📍一楼三鲜馄饨'},
+                { main: '素菜饭包（￥8）',sub: '📍一楼饭包'},
+                { main: '奥尔良腿肉饭包（￥11）',sub: '📍一楼饭包'},
+                { main: '拌面藕（￥6）',sub: '📍一楼2号窗口'},
+                { main: '红烧牛肉饭（￥15）',sub: '📍二楼民族窗口'},
+                { main: '羊杂汤（￥3）',sub: '📍二楼民族窗口'},
+                { main: '小份菜',sub: '📍二楼民族窗口'},
+                { main: '精品菜',sub: '📍二楼'},
+                { main: '肉夹馍（￥8）',sub: '📍二楼台湾汉堡'},
+                { main: '蛋堡（￥3）',sub: '📍二楼台湾汉堡'},
+                { main: '特色炸货',sub: '📍二楼台湾汉堡'},
+                { main: '火腿鸡蛋汉堡（￥5）',sub: '📍二楼台湾汉堡'},
+                { main: '牛肉汉堡（￥9）',sub: '📍二楼台湾汉堡'},
+                { main: '麻辣面（￥5）',sub: '📍一楼陕西刀削面'},
+                { main: '油泼面（￥5）',sub: '📍一楼陕西刀削面'},
+                { main: '干拌面（￥5）',sub: '📍一楼陕西刀削面'},
+                { main: '土豆丁打卤面（￥7）',sub: '📍一楼陕西刀削面'},
+                { main: '麻酱面（￥7）',sub: '📍一楼陕西刀削面'},
+                { main: '鸡汤面（￥7）',sub: '📍一楼陕西刀削面'},
+                { main: '尖椒肉丝面（￥8）',sub: '📍一楼陕西刀削面'},
+                { main: '红油金针菇拌面（￥8）',sub: '📍一楼陕西刀削面'},
+                { main: '葱香肉卤面（￥8）',sub: '📍一楼陕西刀削面'},
+                { main: '麻辣鱼丸面（￥8）',sub: '📍一楼陕西刀削面'},
+                { main: '打卤面（￥7）',sub: '📍一楼陕西刀削面'},
+                { main: '老北京炸酱面（￥10）',sub: '📍一楼陕西刀削面'},
+                { main: '武汉热干面（￥9）',sub: '📍一楼陕西刀削面'},
+                { main: '清汤面（￥7）',sub: '📍一楼陕西刀削面'},
+                { main: '鸡丝面（￥10）',sub: '📍一楼陕西刀削面'},
+                { main: '牛肉面（￥12）',sub: '📍一楼陕西刀削面'},
+                { main: '麻辣烫',sub: '📍二楼'},
+                { main: '煮方便面',sub: '📍一楼'},
+                { main: '麦香主食',sub: '📍一楼'},
+                { main: '自选',sub: '📍三楼'},
+            ],
+            1: [
+                {main: '风味炖菜',sub: '📍一楼'},
+                {main: '雪顶鸡排滑蛋饭（￥13）',sub: '📍一楼港式烧饭'},
+                {main: '咖喱鸡扒饭（￥11）',sub: '📍一楼港式烧饭'},
+                {main: '香煎鸡扒饭（￥11）',sub: '📍一楼港式烧饭'},
+                {main: '超级大富豪（￥13）',sub: '📍一楼港式烧饭'},
+                {main: '营养粥',sub: '📍一楼'},
+                {main: '东北粘玉米（￥3）',sub: '📍一楼营养粥'},
+                {main: '炒面',sub: '📍一楼'},
+                {main: '煎饼果子',sub: '📍一楼'},
+                {main: '烤冷面',sub: '📍一楼'},
+                {main: '创新菜',sub: '📍一楼'},
+                {main: '小份菜',sub: '📍一楼'},
+                {main: '铁板炒饭',sub: '📍一楼'},
+                {main: '米粉（￥9）',sub: '📍一楼'},
+                {main: '肥肠面（￥12）',sub: '📍一楼初次见面'},
+                {main: '牛肉面（￥9.5）',sub: '📍一楼初次见面'},
+                {main: '麻辣面（￥9）',sub: '📍一楼初次见面'},
+                {main: '番茄面（￥9）',sub: '📍一楼初次见面'},
+                {main: '油泼面（￥8）',sub: '📍一楼初次见面'},
+                {main: '猪肝面（￥8）',sub: '📍一楼初次见面'},
+                {main: '老坛酸菜面（￥9）',sub: '📍一楼初次见面'},
+                {main: '鸭血粉丝汤',sub: '📍一楼粉丝汤'},
+                {main: '麻辣鸡汤凉皮（￥10）',sub: '📍一楼拌菜凉皮'},
+                {main: '拌菜',sub: '📍一楼'},
+                {main: '陕西麻酱凉皮（￥8）',sub: '📍一楼拌菜凉皮'},
+                {main: '香煎豆腐饭（￥9）',sub: '📍一楼咖喱饭'},
+                {main: '香煎土豆饭（￥9）',sub: '📍一楼咖喱饭'},
+                {main: '香煎茄子饭（￥9）',sub: '📍一楼咖喱饭'},
+                {main: '香煎鸡蛋饭（￥11）',sub: '📍一楼咖喱饭'},
+                {main: '薯条鸡柳饭（￥12）',sub: '📍一楼咖喱饭'},
+                {main: '脆皮鸡咖喱饭（￥12）',sub: '📍一楼咖喱饭'},
+                {main: '香煎猪肝饭（￥12）',sub: '📍一楼咖喱饭'},
+                {main: '宫保鸡丁饭（￥12）',sub: '📍一楼咖喱饭'},
+                {main: '香菇鸡片饭（￥12）',sub: '📍一楼咖喱饭'},
+                {main: '土豆鸡腿咖喱饭（￥13）',sub: '📍一楼咖喱饭'},
+                {main: '酸菜肉饭（￥13）',sub: '📍一楼咖喱饭'},
+                {main: '加州鸡饭（￥14）',sub: '📍一楼咖喱饭'},
+                {main: '鸡全腿饭（￥14）',sub: '📍一楼咖喱饭'},
+                {main: '土豆牛肉咖喱饭（￥15）',sub: '📍一楼咖喱饭'},
+                {main: '金针菇肥牛饭（￥15）',sub: '📍一楼咖喱饭'},
+                {main: '酱香鸡片意面（￥12）',sub: '📍一楼减脂餐'},
+                {main: '蒜香火腿意面（￥12）',sub: '📍一楼减脂餐'},
+                {main: '肉丝意面（￥12）',sub: '📍一楼减脂餐'},
+                {main: '香煎鸡肉超级碗（￥12）',sub: '📍一楼减脂餐'},
+                {main: '嫩牛蔬菜饭（￥14）',sub: '📍一楼减脂餐'},
+                {main: '全麦火腿三明治（￥9）',sub: '📍一楼减脂餐'},
+                {main: '农夫培根三明治（￥9）',sub: '📍一楼减脂餐'},
+                {main: '肉酱意面（￥12）',sub: '📍一楼减脂餐'},
+                {main: '番茄牛腩意面（￥15）',sub: '📍一楼减脂餐'},
+                {main: '土豆粉鸡公煲（￥8）',sub: '📍一楼鸡公煲'},
+                {main: '千叶豆腐鸡公煲（￥8）',sub: '📍一楼鸡公煲'},
+                {main: '茄子鸡公煲（￥11.5）',sub: '📍一楼鸡公煲'},
+                {main: '红烧肉煲（￥12）',sub: '📍一楼鸡公煲'},
+                {main: '鸡公煲（￥12）',sub: '📍一楼鸡公煲'},
+                {main: '培根鸡公煲（￥12）',sub: '📍一楼鸡公煲'},
+                {main: '腐竹鸡公煲（￥13）',sub: '📍一楼鸡公煲'},
+                {main: '鲜蘑鸡公煲（￥13）',sub: '📍一楼鸡公煲'},
+                {main: '酸汤肉丸煲（￥14）',sub: '📍一楼鸡公煲'},
+                {main: '瓦香鸡片煲（￥15）',sub: '📍一楼鸡公煲'},
+                {main: '麻辣菜花饭（￥8）',sub: '📍一楼铁板饭'},
+                {main: '麻浓汁火腿饭（￥9）',sub: '📍一楼铁板饭'},
+                {main: '招牌鸡饭（￥11）',sub: '📍一楼铁板饭'},
+                {main: '金牌什锦饭（￥12）',sub: '📍一楼铁板饭'},
+                {main: '麻辣鸡片饭（￥12）',sub: '📍一楼铁板饭'},
+                {main: '黑椒培根饭（￥12）',sub: '📍一楼铁板饭'},
+                {main: '照烧鸡排饭（￥13）',sub: '📍一楼铁板饭'},
+                {main: '孜然炒肉饭（￥14）',sub: '📍一楼铁板饭'},
+                {main: '蜜汁肉饭（￥14）',sub: '📍一楼铁板饭'},
+                {main: '黑椒牛肉饭（￥15）',sub: '📍一楼铁板饭'},
+                {main: '超级脊骨饭（￥15）',sub: '📍一楼铁板饭'},
+                {main: '煮方便面',sub: '📍一楼饮料部'},
+                {main: '麻辣烫（￥11）',sub: '📍二楼香锅麻辣烫'},
+                {main: '麻辣拌（￥11）',sub: '📍二楼香锅麻辣烫'},
+                {main: '麻辣香锅（￥11）',sub: '📍二楼香锅麻辣烫'},
+                {main: '石锅拌饭（￥8）',sub: '📍二楼朝鲜拌饭'},
+                {main: '金牌什锦拌饭（￥9）',sub: '📍二楼朝鲜拌饭'},
+                {main: '骨肉相连拌饭（￥9）',sub: '📍二楼朝鲜拌饭'},
+                {main: '黑椒培根拌饭（￥10）',sub: '📍二楼朝鲜拌饭'},
+                {main: '五花肉酸菜拌饭（￥12）',sub: '📍二楼朝鲜拌饭'},
+                {main: '孜然蜜汁肉拌饭（￥12）',sub: '📍二楼朝鲜拌饭'},
+                {main: '黑椒鸡排拌饭（￥12）',sub: '📍二楼朝鲜拌饭'},
+                {main: '卤肉拌饭（￥12）',sub: '📍二楼朝鲜拌饭'},
+                {main: '韩式猪排拌饭（￥12）',sub: '📍二楼朝鲜拌饭'},
+                {main: '藤椒炒鸡拌饭（￥12）',sub: '📍二楼朝鲜拌饭'},
+                {main: '黑椒煎肉拌饭（￥13）',sub: '📍二楼朝鲜拌饭'},
+                {main: 'Q汁鸭翅拌饭（￥13）',sub: '📍二楼朝鲜拌饭'},
+                {main: '酱香排骨拌饭（￥14）',sub: '📍二楼朝鲜拌饭'},
+                {main: '黑椒牛肉拌饭（￥15）',sub: '📍二楼朝鲜拌饭'},
+                {main: '香辣三鲜牛肉拌饭（￥10）',sub: '📍二楼朝鲜拌饭'},
+                {main: '青菜锅仔饭（￥9）',sub: '📍二楼烤盘锅仔饭'},
+                {main: '鸡丸豆腐锅仔饭（￥9）',sub: '📍二楼烤盘锅仔饭'},
+                {main: '豆花里脊锅仔饭（￥12）',sub: '📍二楼烤盘锅仔饭'},
+                {main: '坛肉酸菜锅仔饭（￥14）',sub: '📍二楼烤盘锅仔饭'},
+                {main: '金针菇肥牛锅仔饭（￥15）',sub: '📍二楼烤盘锅仔饭'},
+                {main: '什锦小火锅锅仔饭（￥15）',sub: '📍二楼烤盘锅仔饭'},
+                {main: '土豆片烤盘饭（￥9）',sub: '📍二楼烤盘锅仔饭'},
+                {main: '千叶豆腐烤盘饭（￥10）',sub: '📍二楼烤盘锅仔饭'},
+                {main: '杂丸烤盘饭（￥12）',sub: '📍二楼烤盘锅仔饭'},
+                {main: '培根金针菇烤盘饭（￥12）',sub: '📍二楼烤盘锅仔饭'},
+                {main: '鸡蛋火腿烤盘饭（￥12）',sub: '📍二楼烤盘锅仔饭'},
+                {main: '香辣鸡柳烤盘饭（￥12）',sub: '📍二楼烤盘锅仔饭'},
+                {main: '奥尔良鸡翅烤盘饭（￥13）',sub: '📍二楼烤盘锅仔饭'},
+                {main: '五花肉酸菜烤盘饭（￥14）',sub: '📍二楼烤盘锅仔饭'},
+                {main: '肥牛金针菇烤盘饭（￥15）',sub: '📍二楼烤盘锅仔饭'},
+                {main: '番茄豆花鸡片饭（￥12）',sub: '📍二楼酸菜鱼'},
+                {main: '日式肉丼饭（￥12）',sub: '📍二楼酸菜鱼'},
+                {main: '酱香豆花鸡片饭（￥12）',sub: '📍二楼酸菜鱼'},
+                {main: '秦腾椒豆花鸡片饭（￥12）',sub: '📍二楼酸菜鱼'},
+                {main: '毛血旺饭（￥12）',sub: '📍二楼酸菜鱼'},
+                {main: '国宴丸子饭（￥12）',sub: '📍二楼酸菜鱼'},
+                {main: '酱香豆腐饭（￥9）',sub: '📍二楼酸菜鱼'},
+                {main: '麻辣时蔬饭（￥9）',sub: '📍二楼酸菜鱼'},
+                {main: '酸菜鱼饭（￥13）',sub: '📍二楼酸菜鱼'},
+                {main: '番茄鱼饭（￥13）',sub: '📍二楼酸菜鱼'},
+                {main: '藤椒鱼饭（￥13）',sub: '📍二楼酸菜鱼'},
+                {main: '麻辣鸡肉饭（￥13）',sub: '📍二楼酸菜鱼'},
+                {main: '水煮鱼饭（￥13）',sub: '📍二楼酸菜鱼'},
+                {main: '金汤肥牛饭（￥14）',sub: '📍二楼酸菜鱼'},
+                {main: '香辣豆腐饭（￥9）',sub: '📍二楼酸菜鱼'},
+                {main: '韩式炒年糕（￥9）',sub: '📍二楼韩式炸鸡'},
+                {main: '韩式大鸡排（￥10）',sub: '📍二楼韩式炸鸡'},
+                {main: '鸡肉卷琵琶腿套餐（￥13）',sub: '📍二楼韩式炸鸡'},
+                {main: '汉堡套餐（￥15）',sub: '📍二楼韩式炸鸡'},
+                {main: '韩式鸡排米饭（￥12）',sub: '📍二楼韩式炸鸡'},
+                {main: '黑椒鸡块海苔米饭（￥13）',sub: '📍二楼韩式炸鸡'},
+                {main: '鸡米花茄子双拼饭（￥13）',sub: '📍二楼韩式炸鸡'},
+                {main: '奥尔良鸡翅鸡肉丁双拼饭（￥13）',sub: '📍二楼韩式炸鸡'},
+                {main: '奥尔良鸡排笑脸饭（￥14）',sub: '📍二楼韩式炸鸡'},
+                {main: '香辣鸡柳鱿鱼饭（￥14）',sub: '📍二楼韩式炸鸡'},
+                {main: '沙拉鸡排饭（￥12）',sub: '📍二楼阿扎提大盘鸡'},
+                {main: '番茄鸡排饭（￥12）',sub: '📍二楼阿扎提大盘鸡'},
+                {main: '蜜汁鸡排饭（￥12）',sub: '📍二楼阿扎提大盘鸡'},
+                {main: '甘梅鸡排饭（￥12）',sub: '📍二楼阿扎提大盘鸡'},
+                {main: '麻辣鸡排饭（￥12）',sub: '📍二楼阿扎提大盘鸡'},
+                {main: '排骨酱鸡排饭（￥12）',sub: '📍二楼阿扎提大盘鸡'},
+                {main: '炒馕大杂烩（￥13）',sub: '📍二楼阿扎提大盘鸡'},
+                {main: '土豆泥烤肠饭（￥9）',sub: '📍二楼阿扎提大盘鸡'},
+                {main: '土豆粉蔬菜饭（￥9）',sub: '📍二楼阿扎提大盘鸡'},
+                {main: '鸡丸蔬菜饭（￥9）',sub: '📍二楼阿扎提大盘鸡'},
+                {main: '香辣大盘鸡（￥13）',sub: '📍二楼阿扎提大盘鸡'},
+                {main: '酱香大盘鸡（￥13）',sub: '📍二楼阿扎提大盘鸡'},
+                {main: '黑椒鸡腿饭（￥13）',sub: '📍二楼阿扎提大盘鸡'},
+                {main: '蟹黄剁椒烧鸭饭（￥14）',sub: '📍二楼阿扎提大盘鸡'},
+                {main: '秘制叉烧肉饭（￥15）',sub: '📍二楼阿扎提大盘鸡'},
+                {main: '小鸡炖蘑菇（￥13）',sub: '📍二楼蒸饺烩饭'},
+                {main: '毛氏红烧肉（￥16）',sub: '📍二楼蒸饺烩饭'},
+                {main: '牛腩炖日本豆腐（￥16）',sub: '📍二楼蒸饺烩饭'},
+                {main: '刀削面',sub: '📍二楼蒸饺烩饭'},
+                {main: '自选',sub: '📍二楼'},
+                {main: '香辣红肠培根饭（￥12）',sub: '📍一楼芝士焗饭'},
+                {main: '水果沙拉蔬菜饭（￥12）',sub: '📍一楼芝士焗饭'},
+                {main: '黑椒培根饭（￥12）',sub: '📍一楼芝士焗饭'},
+                {main: '照烧红肠饭（￥12）',sub: '📍一楼芝士焗饭'},
+            ],
+            2: [
+                {main: '旋转小火锅',sub: '📍三楼'},
+                {main: '扒肉（￥10）',sub: '📍一楼坛肉'},
+                {main: '东坡肉（￥11）',sub: '📍一楼坛肉'},
+                {main: '冰糖肘子（￥13）',sub: '📍一楼坛肉'},
+                {main: '排骨（￥16）',sub: '📍一楼坛肉'},
+                {main: '排骨肉（￥16）',sub: '📍一楼坛肉'},
+                {main: '护心肉（￥14）',sub: '📍一楼坛肉'},
+                {main: '狮子头（￥6）',sub: '📍一楼坛肉'},
+                {main: '狮子头河粉（￥9）',sub: '📍一楼新一⭐小锅'},
+                {main: '豆腐丸子（￥7）',sub: '📍一楼新一⭐小锅'},
+                {main: '羊肉肥羊粉（￥10）',sub: '📍一楼新一⭐小锅'},
+                {main: '五花肉酸菜（￥8）',sub: '📍一楼新一⭐小锅'},
+                {main: '牛肉柿子（￥12）',sub: '📍一楼新一⭐小锅'},
+                {main: '羊肉酸菜（￥9）',sub: '📍一楼新一⭐小锅'},
+                {main: '豆腐菠菜（￥6）',sub: '📍一楼新一⭐小锅'},
+                {main: '贡丸米线（￥10）',sub: '📍一楼新一⭐小锅'},
+                {main: '酸辣粉（￥8）',sub: '📍一楼新一⭐小锅'},
+                {main: '粗粮细作（￥7）',sub: '📍一楼新一⭐小锅'},
+                {main: '鸡丸火锅面（￥10）',sub: '📍一楼新一⭐小锅'},
+                {main: '羊肉火锅面（￥10）',sub: '📍一楼新一⭐小锅'},
+                {main: '素菜饭包（￥6）',sub: '📍一楼饭包'},
+                {main: '鸡蛋酱奥尔良腿肉饭包（￥11）',sub: '📍一楼饭包'},
+                {main: '干饭肉酱饭包（￥8）',sub: '📍一楼饭包'},
+                {main: '煎饼果子（￥6）',sub: '📍一楼'},
+                {main: '烤冷面（￥6）',sub: '📍一楼'},
+                {main: '大众炒菜',sub: '📍一楼'},
+                {main: '麻辣烫',sub: '📍一楼'},
+                {main: '清真菜',sub: '📍一楼'},
+                {main: '馄饨',sub: '📍一楼'},
+                {main: '煮方便面',sub: '📍一楼'},
+                {main: '牛肉面',sub: '📍一楼清真'},
+            ],
+            3: [
+                {main: '火锅鸡盖饭（￥13）',sub: '📍火锅鸡窗口'},
+                {main: '钵钵鸡（￥1/签）',sub: '📍火锅鸡窗口'},
+                {main: '蛋炒饭（￥7）',sub: '📍串炒饭'},
+                {main: '卫龙炒饭（￥7）',sub: '📍串炒饭'},
+                {main: '酱油炒饭（￥7）',sub: '📍串炒饭'},
+                {main: '木须柿子炒饭（￥8）',sub: '📍串炒饭'},
+                {main: '腊肠炒饭（￥8）',sub: '📍串炒饭'},
+                {main: '辣白菜炒饭（￥8）',sub: '📍串炒饭'},
+                {main: '尖椒肉丝炒饭（￥8）',sub: '📍串炒饭'},
+                {main: '火腿炒饭（￥8）',sub: '📍串炒饭'},
+                {main: '老干妈酱炒饭（￥8）',sub: '📍串炒饭'},
+                {main: '玉米火腿炒饭（￥9）',sub: '📍串炒饭'},
+                {main: '火腿鸡蛋炒饭（￥9）',sub: '📍串炒饭'},
+                {main: '老干妈蛋炒饭（￥9）',sub: '📍串炒饭'},
+                {main: '卫龙蛋炒饭（￥9）',sub: '📍串炒饭'},
+                {main: '榨菜肉丝炒饭（￥9）',sub: '📍串炒饭'},
+                {main: '孜然牛肉炒饭（￥11）',sub: '📍串炒饭'},
+                {main: '红肠炒饭（￥11）',sub: '📍串炒饭'},
+                {main: '老干妈红肠炒饭（￥11）',sub: '📍串炒饭'},
+                {main: '扬州炒饭（￥12）',sub: '📍串炒饭'},
+                {main: '干肠炒饭（￥12）',sub: '📍串炒饭'},
+                {main: '三鲜炒饭（￥12）',sub: '📍串炒饭'},
+                {main: '香辣鸡腿堡套餐',sub: '📍0090炸鸡汉堡'},
+                {main: '板烧鸡腿堡套餐',sub: '📍0090炸鸡汉堡'},
+                {main: '藤椒鸡腿堡套餐',sub: '📍0090炸鸡汉堡'},
+                {main: '麻辣鸡片饭（￥12）',sub: '📍叉烧肉·鳗鱼饭'},
+                {main: '麻辣火腿饭（￥12）',sub: '📍叉烧肉·鳗鱼饭'},
+                {main: '藤椒鸡片饭（￥12）',sub: '📍叉烧肉·鳗鱼饭'},
+                {main: '金汤酸辣鸡片饭（￥13）',sub: '📍叉烧肉·鳗鱼饭'},
+                {main: '鲜香鸡片饭（￥12）',sub: '📍叉烧肉·鳗鱼饭'},
+                {main: '金汤酸辣肥牛饭（￥15）',sub: '📍叉烧肉·鳗鱼饭'},
+                {main: '肥汁豆腐饭（￥9）',sub: '📍叉烧肉·鳗鱼饭'},
+                {main: '擂椒皮蛋拌饭（￥12）',sub: '📍叉烧肉·鳗鱼饭'},
+                {main: '照烧茄条丼饭（￥9）',sub: '📍叉烧肉·鳗鱼饭'},
+                {main: '鸡丁烧肉饭（￥12）',sub: '📍叉烧肉·鳗鱼饭'},
+                {main: '招牌浇汁鸡肉饭（￥12）',sub: '📍叉烧肉·鳗鱼饭'},
+                {main: '招牌日式烧肉饭（￥13）',sub: '📍叉烧肉·鳗鱼饭'},
+                {main: '日式肥牛烧肉饭（￥15）',sub: '📍叉烧肉·鳗鱼饭'},
+                {main: '日式蒲烧鳗鱼饭（￥15）',sub: '📍叉烧肉·鳗鱼饭'},
+                {main: '麻辣香锅（￥15/斤）',sub: '📍香锅·麻辣烫'},
+                {main: '麻辣烫（￥13/斤）',sub: '📍香锅·麻辣烫'},
+                {main: '麻辣拌（￥13/斤）',sub: '📍香锅·麻辣烫'},
+                {main: '铁板烤肉饭（￥13）',sub: '📍香锅·麻辣烫'},
+                {main: '铁板鱼饼鸡肉（￥13）',sub: '📍香锅·麻辣烫'},
+                {main: '铁板秘制胡椒羊肉饭（￥14）',sub: '📍香锅·麻辣烫'},
+                {main: '铁板咖喱猪排饭（￥14）',sub: '📍香锅·麻辣烫'},
+                {main: '铁板菌菇饭（￥11）',sub: '📍香锅·麻辣烫'},
+                {main: '铁板杂丸饭（￥10）',sub: '📍香锅·麻辣烫'},
+                {main: '铁板秘制胡椒鸡肉饭（￥13）',sub: '📍香锅·麻辣烫'},
+                {main: '铁板年糕鸡肉饭（￥11）',sub: '📍香锅·麻辣烫'},
+                {main: '新派香辣猪肉片（￥15）',sub: '📍烧腊·煲仔饭'},
+                {main: '新派香辣猪肉片（￥15）',sub: '📍烧腊·煲仔饭'},
+                {main: '新派香辣鱼肉片（￥15）',sub: '📍烧腊·煲仔饭'},
+                {main: '新派酱香鸡肉片（￥13）',sub: '📍烧腊·煲仔饭'},
+                {main: '新派番茄嫩豆腐（￥9）',sub: '📍烧腊·煲仔饭'},
+                {main: '捞冒鲜椒鸡（￥12）',sub: '📍烧腊·煲仔饭'},
+                {main: '捞冒素菜（￥9）',sub: '📍烧腊·煲仔饭'},
+                {main: '烤鸭饭（￥12）',sub: '📍烧腊·煲仔饭'},
+                {main: '广式经典四喜饭（￥15）',sub: '📍烧腊·煲仔饭'},
+                {main: '广式火腿滑蛋饭（￥9）',sub: '📍烧腊·煲仔饭'},
+                {main: '腊肠煲仔饭（￥12）',sub: '📍烧腊·煲仔饭'},
+                {main: '蜜汁肉煲仔饭（￥12）',sub: '📍烧腊·煲仔饭'},
+                {main: '叉烧双拼饭（￥14）',sub: '📍烧腊·煲仔饭'},
+                {main: '奥尔良煲仔饭（￥12）',sub: '📍烧腊·煲仔饭'},
+            ],
 
-        // 定义不同格子对应的题库
+            6: [
+                {main: '太和板面（¥7）',sub: '📍安徽板面'},
+                {main: '牛腩板面（¥7）',sub: '📍安徽板面'},
+                {main: '牛杂板面（¥7）',sub: '📍安徽板面'},
+                {main: '毛肚热干面（¥13）',sub: '📍热干面'},
+                {main: '剁椒热干面（¥9）',sub: '📍热干面'},
+                {main: '红油热干面（¥9）',sub: '📍热干面'},
+                {main: '肉酱热干面（¥10）',sub: '📍热干面'},
+                {main: '牛肉热干面（¥12）',sub: '📍热干面'},
+                {main: '原味热干面（¥8）',sub: '📍热干面'},
+                {main: '西红柿鸡蛋拌面（¥8）',sub: '📍兰州拉面'},
+                {main: '大块红烧牛肉面（¥15）',sub: '📍兰州拉面'},
+                {main: '岐山臊子拌面（¥9）',sub: '📍兰州拉面'},
+                {main: '鸡蛋杂酱面（¥8）',sub: '📍兰州拉面'},
+                {main: '牛肉汤面（¥6）',sub: '📍兰州拉面'},
+                {main: '香菇肉沫拌面（¥10）',sub: '📍兰州拉面'},
+                {main: '老坛酸菜牛肉面（¥10）',sub: '📍兰州拉面'},
+                {main: '肉酱拌面（¥10）',sub: '📍兰州拉面'},
+                {main: '一品麻辣面（¥8）',sub: '📍兰州拉面'},
+                {main: '朝鲜凉拌冷面（¥9）',sub: '📍冷面系列'},
+                {main: '肉沫拌面（¥12）',sub: '📍陕西凉皮'},
+                {main: '牛肉刀削面（¥10）',sub: '📍刀削面'},
+                {main: '麻辣刀削面（¥10）',sub: '📍刀削面'},
+                {main: '酸辣肉燥面（¥10）',sub: '📍刀削面'},
+                {main: '传奇油泼面（¥8）',sub: '📍刀削面'},
+                {main: '西北麻酱凉拌面（¥9）',sub: '📍刀削面'},
+                {main: '酸辣粉（¥9）',sub: '📍重庆小面'},
+                {main: '肥肠小面（¥12）',sub: '📍重庆小面'},
+                {main: '猪肝小面（¥9）',sub: '📍重庆小面'},
+                {main: '重庆小面（¥8）',sub: '📍重庆小面'},
+                {main: '重庆拌面（¥9）',sub: '📍重庆小面'},
+                {main: '牛肉小面（¥13）',sub: '📍重庆小面'},
+                {main: '担担面（¥10）',sub: '📍重庆小面'},
+                {main: '大盘鸡皮带面（¥9）',sub: '📍裤带面'},
+                {main: '鸡汤罐罐面（¥8）',sub: '📍罐罐面'},
+                {main: '牛肉罐罐面（¥10）',sub: '📍罐罐面'},
+                {main: '肥肠罐罐面（¥11）',sub: '📍罐罐面'},
+                {main: '羊肉罐罐面（¥12）',sub: '📍罐罐面'},
+                {main: '排骨罐罐面（¥13）',sub: '📍罐罐面'},
+                {main: '杂丸米线（¥10）',sub: '📍米线'},
+                {main: '麻辣培根米线（¥14）',sub: '📍米线'},
+                {main: '番茄肥牛米线（¥12）',sub: '📍米线'},
+                {main: '鱼豆腐米线（¥9）',sub: '📍米线'},
+                {main: '肉沫米线（¥10）',sub: '📍米线'},
+                {main: '麻酱凉拌面（¥8）',sub: '📍河南烩面'},
+                {main: '羊杂烩面（¥12）',sub: '📍河南烩面'},
+                {main: '羊肉烩面（¥10）',sub: '📍河南烩面'},
+                {main: '三鲜烩面（¥10）',sub: '📍河南烩面'},
+                {main: '干拌手撕面（¥10）',sub: '📍手撕面'},
+                {main: '酸辣金汤手撕面（¥9）',sub: '📍手撕面'},
+                {main: '肉沫茄子打卤面（¥9）',sub: '📍手撕面'},
+                {main: '精美炒菜',sub: '📍进门左手边'},
+                {main: '猪手',sub: '📍熏酱拌菜'},
+            ],
+            7: [
+                {main: '热乎乎炒菜',sub: '📍一楼精美小炒'},
+                {main: '地三鲜盖饭（￥6）',sub: '📍一楼风味盖饭'},
+                {main: '肉末茄子盖饭（￥6）',sub: '📍一楼风味盖饭'},
+                {main: '木须肉盖饭（￥6.5）',sub: '📍一楼风味盖饭'},
+                {main: '木须柿子盖饭（￥6）',sub: '📍一楼风味盖饭'},
+                {main: '宫保鸡丁盖饭（￥6.5）',sub: '📍一楼风味盖饭'},
+                {main: '孜然羊肉盖饭（￥8）',sub: '📍一楼风味盖饭'},
+                {main: '老干妈肉片盖饭（￥7）',sub: '📍一楼风味盖饭'},
+                {main: '鱼香肉丝盖饭（￥7）',sub: '📍一楼风味盖饭'},
+                {main: '香喷喷滴盖饭',sub: '📍一楼风味盖饭'},
+                {main: '烤串',sub: '📍一楼烧烤'},
+                {main: '毛肚锅',sub: '📍一楼烧烤'},
+                {main: '汤达人方便面（￥6.5）',sub: '📍一楼烧烤'},
+                {main: '农心方便面（￥6.5）',sub: '📍一楼烧烤'},
+                {main: '煮火鸡面（￥7.5）',sub: '📍一楼烧烤'},
+                {main: '拌火鸡面（￥8.5）',sub: '📍一楼烧烤'},
+                {main: '疙瘩汤（￥2）',sub: '📍一楼烧烤'},
+                {main: '火鸡面土豆粉（￥10）',sub: '📍一楼烧烤'},
+                {main: '胡辣汤',sub: '📍一楼烧烤'},
+                {main: '创新菜',sub: '📍一楼创新菜'},
+                {main: '毛血旺（￥5）',sub: '📍一楼创新菜'},
+                {main: '香辣虾（￥6）',sub: '📍一楼创新菜'},
+                {main: '炸鱼柳（￥6）',sub: '📍一楼创新菜'},
+                {main: '水煮牛肉（￥7）',sub: '📍一楼创新菜'},
+                {main: '口水鸡（￥7）',sub: '📍一楼创新菜'},
+                {main: '麻辣猪肉丝（￥6）',sub: '📍一楼大锅菜'},
+                {main: '鱼香鸡肉丝（￥6）',sub: '📍一楼大锅菜'},
+                {main: '五花肉土豆片（￥5）',sub: '📍一楼大锅菜'},
+                {main: '干炸琵琶腿（￥5）',sub: '📍一楼大锅菜'},
+                {main: '干炸鸡米花（￥5）',sub: '📍一楼大锅菜'},
+                {main: '牛肉炖豆腐（￥4）',sub: '📍一楼大锅菜'},
+                {main: '酱护心肉（￥12）',sub: '📍一楼大锅菜'},
+                {main: '牛肉土豆片（￥12）',sub: '📍一楼大锅菜'},
+                {main: '大锅菜',sub: '📍一楼'},
+                {main: '锅包肉（￥6）',sub: '📍一楼大锅菜'},
+                {main: '猪耳朵拌黄瓜（￥8）',sub: '📍一楼大锅菜'},
+                {main: '肘子肉拌黄瓜（￥8）',sub: '📍一楼大锅菜'},
+                {main: '麻辣鳕鱼（￥7）',sub: '📍一楼大锅菜'},
+                {main: '过桥米线（￥8）',sub: '📍一楼特色锅'},
+                {main: '酸辣苕粉（￥8）',sub: '📍一楼特色锅'},
+                {main: '酸辣河粉（￥7）',sub: '📍一楼特色锅'},
+                {main: '粗粮细作（￥7）',sub: '📍一楼特色锅'},
+                {main: '牛肉柿子锅（￥12）',sub: '📍一楼特色锅'},
+                {main: '肥牛金针菇锅（￥12）',sub: '📍一楼特色锅'},
+                {main: '羊肉菠菜锅（￥10）',sub: '📍一楼特色锅'},
+                {main: '羊肉宽粉锅（￥10）',sub: '📍一楼特色锅'},
+                {main: '羊肉酸菜锅（￥9）',sub: '📍一楼特色锅'},
+                {main: '鱼豆腐粉丝锅（￥8）',sub: '📍一楼特色锅'},
+                {main: '鱼排粉丝锅（￥8）',sub: '📍一楼特色锅'},
+                {main: '五花肉酸菜锅（￥8）',sub: '📍一楼特色锅'},
+                {main: '鸡丸豆腐锅（￥7）',sub: '📍一楼特色锅'},
+                {main: '菠菜宽粉锅（￥7）',sub: '📍一楼特色锅'},
+                {main: '紫菜豆腐锅（￥7）',sub: '📍一楼特色锅'},
+                {main: '豆芽粉丝锅（￥6）',sub: '📍一楼特色锅'},
+                {main: '豆腐菠菜锅（￥6）',sub: '📍一楼特色锅'},
+                {main: '拌馄饨（￥10）',sub: '📍一楼馄饨'},
+                {main: '煮馄饨（￥8）',sub: '📍一楼馄饨'},
+                {main: '蛋炒饭',sub: '📍一楼炒饭'},
+                {main: '辣白菜炒饭',sub: '📍一楼炒饭'},
+                {main: '扬州炒饭',sub: '📍一楼炒饭'},
+                {main: '青菜炒饭',sub: '📍一楼炒饭'},
+                {main: '木须柿子炒饭',sub: '📍一楼炒饭'},
+                {main: '木须土豆条炒饭',sub: '📍一楼炒饭'},
+                {main: '榨菜肉丝炒饭',sub: '📍一楼炒饭'},
+                {main: '红肠炒饭',sub: '📍一楼炒饭'},
+                {main: '老干妈酱蛋炒饭',sub: '📍一楼炒饭'},
+                {main: '孜然牛肉炒饭',sub: '📍一楼炒饭'},
+                {main: '青菜炒饼',sub: '📍一楼炒饼'},
+                {main: '鸡蛋炒饼',sub: '📍一楼炒饼'},
+                {main: '牛肉炒饼',sub: '📍一楼炒饼'},
+                {main: '榨菜炒饼',sub: '📍一楼炒饼'},
+                {main: '鱼香炒饼',sub: '📍一楼炒饼'},
+                {main: '羊肉炒饼',sub: '📍一楼炒饼'},
+                {main: '肉丝炒饼',sub: '📍一楼炒饼'},
+                {main: '红肠炒饼',sub: '📍一楼炒饼'},
+                {main: '香酥鸡排炒饭（￥6）',sub: '📍一楼炒饭'},
+                {main: '自选',sub: '📍二楼'},
+                {main: '煎蛋米粉（¥10）',sub: '📍二楼浮生米粉'},
+                {main: '肉末米粉（¥11）',sub: '📍二楼浮生米粉'},
+                {main: '辣子鸡米粉（¥12）',sub: '📍二楼浮生米粉'},
+                {main: '地三鲜盖浇饭（¥8）',sub: '📍二楼招牌卤肉饭'},
+                {main: '番茄炒蛋盖浇饭（¥8）',sub: '📍二楼招牌卤肉饭'},
+                {main: '鱼香茄条盖浇饭（¥8）',sub: '📍二楼招牌卤肉饭'},
+                {main: '鱼香鸡蛋盖浇饭（¥8）',sub: '📍二楼招牌卤肉饭'},
+                {main: '孜然肉片盖浇饭（¥12）',sub: '📍二楼招牌卤肉饭'},
+                {main: '木须肉盖浇饭（¥12）',sub: '📍二楼招牌卤肉饭'},
+                {main: '扬州炒饭（¥10）',sub: '📍二楼招牌卤肉饭'},
+                {main: '辣子鸡炒饭（¥12）',sub: '📍二楼招牌卤肉饭'},
+                {main: '大碗麻辣烫（¥10）',sub: '📍二楼麻辣烫'},
+                {main: '麻辣香锅（¥10）',sub: '📍二楼麻辣烫'},
+                {main: '肉丝炒河粉（¥10）',sub: '📍二楼麻辣烫'},
+                {main: '火腿炒河粉（¥10）',sub: '📍二楼麻辣烫'},
+                {main: '包菜炒米粉（¥10）',sub: '📍二楼麻辣烫'},
+                {main: '肉沫炒河粉（¥10）',sub: '📍二楼麻辣烫'},
+                {main: '火腿蔬菜炒米粉（¥10）',sub: '📍二楼麻辣烫'},
+                {main: '火腿鸡蛋炒米粉（¥11）',sub: '📍二楼麻辣烫'},
+                {main: '辣子鸡炒米粉（¥12）',sub: '📍二楼麻辣烫'},
+                {main: '原味烤冷面（¥4）',sub: '📍二楼招牌卤肉饭'},
+                {main: '芝士火鸡面烤冷面（¥13）',sub: '📍二楼招牌卤肉饭'},
+                {main: '老干妈火腿炒饭（¥8）',sub: '📍二楼招牌卤肉饭'},
+                {main: '孜然肉丝炒饭（¥8）',sub: '📍二楼招牌卤肉饭'},
+                {main: '榨菜鸡蛋炒饭（¥8）',sub: '📍二楼招牌卤肉饭'},
+                {main: '鸡蛋火腿炒火鸡面（¥11）',sub: '📍二楼招牌卤肉饭'},
+                {main: '老干妈鸡蛋火腿炒饭（¥10）',sub: '📍二楼招牌卤肉饭'},
+                {main: '牛肉汤（¥7）',sub: '📍二楼牛肉汤'},
+                {main: '鸡丝酱饭包（¥9）',sub: '📍二楼特色饭包'},
+                {main: '鸡排肉酱饭包（¥10）',sub: '📍二楼特色饭包'},
+                {main: '原味酱饭包（¥7）',sub: '📍二楼特色饭包'},
+                {main: '香菇酱饭包（¥7）',sub: '📍二楼特色饭包'},
+                {main: '肉末酱饭包（¥8）',sub: '📍二楼特色饭包'},
+                {main: '鸡蛋酱饭包（¥7）',sub: '📍二楼特色饭包'},
+                {main: '老鸭粉丝汤（¥10）',sub: '📍二楼老鸭粉丝汤'},
+                {main: '鸭肠粉丝汤（¥10）',sub: '📍二楼老鸭粉丝汤'},
+                {main: '鸭肉粉丝汤（¥12）',sub: '📍二楼老鸭粉丝汤'},
+                {main: '灌汤包',sub: '📍二楼东农包子'},
+                {main: '水煎包',sub: '📍二楼东农包子'},
+            ],
+
+        };
+
+        // 定义标题
+        const slotTitles = [
+            '来北三，吃这个！', '来北四，吃这个！', '来南一，吃这个！', '来食街，吃这个！', '随机', '亲爱的小主：', '来面园，吃这个！', '来棘园，吃这个！', '小主，饺子馅就别随机了！'
+        ];
 
 
-        const questionPools = [
-            {
-                main: '黄焖鸡',
-                sub: '📍二楼',
-                image: 'https://example.com/image1.jpg'
-            },
-            {
-                main: '黄焖鸡',
-                sub: '📍二楼',
-                image: 'https://example.com/image2.jpg'
-            },
-            {
-                main: '黄焖鸡',
-                sub: '📍二楼',
-                image: 'https://example.com/image3.jpg'
-            },
-            {
-                main: '黄焖鸡',
-                sub: '📍二楼',
-                image: 'https://example.com/image4.jpg'
-            },
-            {
-                main: '黄焖鸡',
-                sub: '📍二楼',
-                image: 'https://example.com/image5.jpg'
-            },
-            {
-                main: '黄焖鸡',
-                sub: '📍二楼',
-                link: 'https://example.com/6',
-                image: 'https://example.com/image6.jpg'
-            },
-            {
-                main: '黄焖鸡',
-                sub: '📍二楼',
-                image: 'https://example.com/image7.jpg'
-            },
-            {
-                main: '黄焖鸡',
-                sub: '📍二楼',
-                image: 'https://example.com/image8.jpg'
-            },
-            {
-                main: '黄焖鸡',
-                sub: '📍二楼',
-                image: 'https://example.com/image9.jpg'
-            }
-        ];
+        // 更新标题
+        document.getElementById('slotTitle').innerText = slotTitles[currentSlot] || "随机抽取";
 
-        // 设置老虎机的标题
-        const slotTitles = [
-            '北三', '北四', '南一', '食街', '随机', '外卖', '面园', '棘园', '饺子园'
-        ];
+        // 获取题库
+        const questions = questionPools[currentSlot] || [{ main: "暂无问题", sub: "请检查配置" }];
 
-        // 获取选中的题库
-        const currentQuestion = questionPools[currentSlot];
+        if (currentSlot === 5) {
+            // 外卖弹窗
+            document.getElementById('pop').classList.add('show');
+<!--            document.getElementById('popContent').innerText = "您的喜好我还没摸清楚！<br>等我弄清楚了，马上给您推荐外卖！<br>或者您要是着急，您就下一道圣旨给我！我的微信：";-->
+            document.getElementById('popContent').innerHTML = "您的喜好我还没摸清楚！<br>等我弄清楚了，马上给您推荐外卖！<br>或者您要是着急，您就下一道圣旨给我！<br>我的微信：";
+        } else if (currentSlot === 8) {
+            // 饺子弹窗
+            document.getElementById('pop').classList.add('show');
+            document.getElementById('popContent').innerHTML = "农大饺子顶呱呱,<br>人人吃过把它夸,<br>手工饺馅样式多,<br>能吃哪种看命吧!";
+        }else {
+        // 启动抽奖
+            function startLottery() {
+                const questionMain = document.getElementById('questionMain');
+                const questionSub = document.getElementById('questionSub');
+                let index = 0;
 
-        // 更新页面显示当前选中的格子标题
-        document.getElementById('slotTitle').innerText = slotTitles[currentSlot];
+                // 滚动问题
+                const interval = setInterval(() => {
+                    const question = questions[index % questions.length];
+                    questionMain.innerText = question.main;
+                    questionSub.innerText = question.sub;
+                    index++;
+                }, 100);
 
-        // 更新问题文本和链接（初始化时不显示）
-        document.getElementById('questionMain').innerText = '';
-        document.getElementById('questionSub').innerText = '';
-
-
-        // 启动抽奖功能，模拟老虎机效果
-        function startLottery() {
-            const slotElement = document.getElementById('slot');
-            const resultElement = document.getElementById('questionMain');
-            const subResultElement = document.getElementById('questionSub');
-            
-            // 模拟滚动效果
-            let count = 0;
-            const interval = setInterval(() => {
-                // 模拟不断变化的文本
-                resultElement.innerText = '焦急选择中';
-                subResultElement.innerText = '... ' + count;
-                count++;
-
-                if (count > 20) {
+                // 停止滚动
+                setTimeout(() => {
                     clearInterval(interval);
-                    // 显示最终抽中的问题
-                    resultElement.innerText = currentQuestion.main;
-                    subResultElement.innerText = currentQuestion.sub;
-                }
-            }, 100);
+                    const finalQuestion = questions[Math.floor(Math.random() * questions.length)];
+                    questionMain.innerText = finalQuestion.main;
+                    questionSub.innerText = finalQuestion.sub;
+                }, 3000);
+            }
+        }
+        function closePopup() {
+            window.location.href = 'index.html'; // 跳转到 app.html 页面
         }
     </script>
-
 </body>
 </html>
