@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>农大·今天吃点啥？</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            /* background-color: #df9dd6; */
+            background: #fad05b;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .title {
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #575858;
+            text-align: center;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5); /* 文字阴影增强立体效果 */
+            font-family: 'Impact', sans-serif; /* 艺术字字体 */
+        }
+
+        .sub-title {
+            font-size: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #2e3a1f;
+            text-align: center;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+            font-family: 'Impact', sans-serif; /* 艺术字字体 */
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 10px;
+            width: 300px;
+            height: 300px;
+            /* background-color: #fff; */
+            /* border: 2px solid #ccc; */
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .cell {
+            background-color: #ed8f1c;
+            color: white;
+            border: 5px solid #871205;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.3s, background-color 0.3s;
+            opacity: 1;
+            position: relative;
+        }
+
+        .cell:hover {
+            transform: scale(1.1);
+            background-color: #cfd91a;
+        }
+
+        .cell:active {
+            transform: scale(0.95);
+        }
+
+        .blink {
+            animation: blink 0.3s infinite alternate;
+        }
+
+        @keyframes blink {
+            0% { background-color: pink; }
+            50% { background-color: purple; }
+            100% { background-color: red; }
+        }
+
+        .actions {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .actions button {
+            background-color: #2e3a1f;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .actions button:hover {
+            background-color: #e462b6;
+        }
+
+        #suggestions {
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        #suggestions input, #suggestions textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            justify-content: center;
+        }
+
+        .like-count {
+            font-size: 18px;
+            margin-top: 10px;
+            margin-left: 25PX;
+        }
+
+        #suggestions button {
+            background-color: #2e3a1f;
+            color: white;
+            padding: 8px;
+            margin: 2px 0;
+            border-radius: 5px;
+
+        }
+
+
+
+
+    </style>
+</head>
+<body>
+
+    <div class="title">东农·今天吃点啥?</div>
+    <div class="sub-title">你听我说，咱今天就吃这个啦！</div>
+
+    <div class="container">
+        <div class="cell" onclick="window.location.href = urls[0]">北三</div>
+        <div class="cell" onclick="window.location.href = urls[1]">北四</div>
+        <div class="cell" onclick="window.location.href = urls[2]">南一</div>
+        <div class="cell" onclick="window.location.href = urls[3]">食街</div>
+        <div class="cell" id="center-cell" onclick="selectCenter()">随机</div>
+        <div class="cell" onclick="window.location.href = urls[5]">外卖</div>
+        <div class="cell" onclick="window.location.href = urls[6]">面园</div>
+        <div class="cell" onclick="window.location.href = urls[7]">棘园</div>
+        <div class="cell" onclick="window.location.href = urls[8]">饺子园</div>
+    </div>
+
+    <div class="actions">
+        <button id="like-button" onclick="like()">👍 点赞</button>
+        <span class="like-count" id="like-count">点赞数: 0</span>
+    </div>
+
+    <div id="suggestions">
+        <!-- <input type="text" id="suggestion-title" placeholder="您的建议标题"> -->
+        <textarea id="suggestion-content" placeholder="请输入您的建议..." rows="4"></textarea>
+        <button onclick="submitSuggestion()">提交建议</button>
+    </div>
+
+
+
+    <script>
+        let urls = [
+            "lottery.html?slot=0",
+            "lottery.html?slot=1",
+            "lottery.html?slot=2",
+            "lottery.html?slot=3",
+            "lottery.html?slot=4",
+            "lottery.html?slot=5",
+            "lottery.html?slot=6",
+            "lottery.html?slot=7",
+            "lottery.html?slot=8"
+        ];
+
+        function selectCenter() {
+            let options = [0, 1, 2, 3, 5, 6, 7, 8]; // 排除中心格
+            let cells = document.querySelectorAll('.cell');
+            let blinkInterval = 100; // 每个格子闪烁的间隔
+            let totalBlinkDuration = 2000; // 整个闪烁过程的持续时间（单位：毫秒）
+            let blinkTimes = totalBlinkDuration / blinkInterval; // 闪烁的次数
+
+            let current = 0;
+            let blinkTimer = setInterval(() => {
+                // 清除所有格子的闪烁效果
+                cells.forEach(cell => cell.classList.remove('blink'));
+
+                // 添加当前格子的闪烁效果
+                cells[options[current]].classList.add('blink');
+                current++;
+
+                if (current === options.length) {
+                    current = 0; // 循环显示所有格子
+                }
+
+                if (blinkTimes-- <= 0) {
+                    clearInterval(blinkTimer); // 停止闪烁
+                    // 随机选择一个格子进行跳转
+                    let selectedIndex = options[Math.floor(Math.random() * options.length)];
+                    cells.forEach(cell => cell.classList.remove('blink')); // 停止闪烁
+                    // 跳转到选中的页面
+                    window.location.href = urls[selectedIndex];
+                }
+            }, blinkInterval);
+        }
+
+        // 点赞功能
+        let likeCount = 0;
+        function likeContent() {
+            likeCount++;
+            document.getElementById('likeCount').innerText = `点赞数：${likeCount}`;
+
+            // 将点赞数发送到后台
+            fetch('/api/like', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ likeCount })
+            }).then(response => response.json())
+              .then(data => console.log('点赞数据已更新:', data));
+        }
+
+        // 提交建议
+        function submitSuggestion() {
+            const suggestion = document.getElementById('suggestionInput').value;
+
+            fetch('/api/suggestion', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ suggestion })
+            }).then(response => response.json())
+              .then(data => alert('感谢您的建议！'));
+        }
+    </script>
+
+</body>
+</html>
+
+
