@@ -168,12 +168,12 @@
     <div id="suggestions">
         <!-- <input type="text" id="suggestion-title" placeholder="您的建议标题"> -->
         <textarea id="suggestion-content" placeholder="请输入您的建议..." rows="4"></textarea>
-        <button onclick="submitSuggestion()">提交建议</button>
+        <button onclick="submitFeedback()">提交建议</button>
     </div>
 
 
     <script>
-        const githubToken = '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';  // 请替换为你的 GitHub Token
+        const githubToken = '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';  // 请替换为你的 GitHub Token
         const owner = '1a399';    // GitHub 用户名
         const repo = '-';           // 仓库名
         const filePath = 'feedback.txt';             // 存储点赞数和反馈的文件路径
@@ -222,78 +222,219 @@
             }, blinkInterval);
         }
 
-       let likeCount = 0; // 点赞计数
+        // 对于非 Latin1 字符进行 Base64 编码的函数
+        function encodeBase64(str) {
+            const encoder = new TextEncoder();
+            const bytes = encoder.encode(str);  // 使用 UTF-8 编码
+            let binary = '';
+            for (let i = 0; i < bytes.length; i++) {
+                binary += String.fromCharCode(bytes[i]);
+            }
+            return btoa(binary);  // 使用 btoa 编码
+        }
+
+        // 对于非 Latin1 字符进行 Base64 解码的函数
+        function decodeBase64(base64Str) {
+            const binary = atob(base64Str);
+            const bytes = new Uint8Array(binary.length);
+            for (let i = 0; i < binary.length; i++) {
+                bytes[i] = binary.charCodeAt(i);
+            }
+            const decoder = new TextDecoder();
+            return decoder.decode(bytes);  // 返回 UTF-8 解码后的字符串
+        }
+
+        let feedbackSha = null;  // 用于存储 feedback.txt 文件的 sha
+        let likeSha = null;      // 用于存储 likecount.txt 文件的 sha
+
+        // 获取 feedback.txt 文件的 sha 值
+        function getFeedbackFileSha() {
+            fetch('https://api.github.com/repos/1a399/-/contents/feedback.txt', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${githubToken}`,
+                    'Accept': 'application/vnd.github.v3+json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.sha) {
+                    feedbackSha = data.sha;  // 保存 sha 值
+                } else {
+                    console.error('未能获取到 feedback.txt 的 sha 值');
+                }
+            })
+            .catch(error => {
+                console.error('获取 feedback.txt sha 值时发生错误:', error);
+            });
+        }
+
+        // 获取 likecount.txt 文件的 sha 值
+        function getLikeFileSha() {
+            fetch('https://api.github.com/repos/1a399/-/contents/likecount.txt', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${githubToken}`,
+                    'Accept': 'application/vnd.github.v3+json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.sha) {
+                    likeSha = data.sha;  // 保存 sha 值
+                } else {
+                    console.error('未能获取到 likecount.txt 的 sha 值');
+                }
+            })
+            .catch(error => {
+                console.error('获取 likecount.txt sha 值时发生错误:', error);
+            });
+        }
 
         // 点赞功能
         function like() {
+            if (!likeSha) {
+                alert('无法获取文件 SHA 值，无法更新点赞数。');
+                return;
+            }
+
+            let likeCount = document.getElementById('like-count').innerText;
+            likeCount = parseInt(likeCount.replace('点赞数: ', ''));
+
+            // 增加点赞数
             likeCount++;
+
+            // 更新页面显示
             document.getElementById('like-count').innerText = `点赞数: ${likeCount}`;
-            updateFile();
+
+            // 将点赞数编码为 Base64
+            const likeCountBase64 = encodeBase64(likeCount.toString());
+
+            // 提交点赞数到 GitHub
+            fetch('https://api.github.com/repos/1a399/-/contents/likecount.txt', {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${githubToken}`,
+                    'Accept': 'application/vnd.github.v3+json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: 'Update like count',
+                    content: likeCountBase64, // 使用 encodeBase64 编码点赞数
+                    sha: likeSha // 使用最新的 sha 值
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.commit) {
+                    alert('点赞数已更新!');
+                }
+            })
+            .catch(error => {
+                console.error('更新点赞数时发生错误:', error);
+                alert('更新点赞数时发生错误');
+            });
         }
 
-        // 提交反馈的函数
+        // 获取点赞数
+        function getLikes() {
+            fetch('https://api.github.com/repos/1a399/-/contents/likecount.txt', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${githubToken}`,
+                    'Accept': 'application/vnd.github.v3+json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message === 'Not Found') {
+                    alert('文件未找到，无法获取点赞数');
+                    return;
+                }
+
+                const content = decodeBase64(data.content); // 解码为原始内容
+                const likeCount = parseInt(content.split('\n')[0].split(': ')[1]) || 0; // 获取点赞数
+                document.getElementById('like-count').innerText = `点赞数: ${likeCount}`;
+            })
+            .catch(error => {
+                console.error('获取点赞数时发生错误:', error);
+                alert('获取点赞数时发生错误');
+            });
+        }
+
         function submitFeedback() {
             const feedbackText = document.getElementById('suggestion-content').value;
 
-            if (feedbackText.trim()) {
-                // 获取当前文件内容
-                fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `token ${githubToken}`,
-                        'Accept': 'application/vnd.github.v3+json'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    // 文件存在，获取当前的文件内容和 SHA
-                    const sha = data.sha;
-                    const currentContent = atob(data.content); // GitHub 返回的是 Base64 编码的内容
+            if (!feedbackText) {
+                alert('请填写您的反馈');
+                return;
+            }
 
-                    // 新的反馈内容
-                    const newContent = currentContent + '\n' + feedbackText;
+            if (!feedbackSha) {
+                alert('无法获取文件 SHA 值，无法提交反馈');
+                return;
+            }
 
-                    // 更新文件内容
-                    return fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`, {
+            // 获取当前文件内容
+            fetch('https://api.github.com/repos/1a399/-/contents/feedback.txt', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${githubToken}`,
+                    'Accept': 'application/vnd.github.v3+json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.content) {
+                    // 解码现有内容
+                    const currentFeedback = decodeBase64(data.content);
+                    const updatedFeedback = currentFeedback + '\n' + feedbackText;  // 将新反馈追加到现有内容后面
+
+                    // 将更新后的内容编码为 Base64
+                    const updatedContentBase64 = encodeBase64(updatedFeedback);
+
+                    // 提交新的内容
+                    return fetch('https://api.github.com/repos/1a399/-/contents/feedback.txt', {
                         method: 'PUT',
                         headers: {
-                            'Authorization': `token ${githubToken}`,
-                            'Accept': 'application/vnd.github.v3+json'
+                            'Authorization': `Bearer ${githubToken}`,
+                            'Accept': 'application/vnd.github.v3+json',
+                            'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
-                            message: 'Add new feedback',  // 提交消息
-                            committer: {
-                                name: 'Your Name',  // 提交者姓名
-                                email: 'your-email@example.com'  // 提交者邮箱
-                            },
-                            content: btoa(newContent), // 将内容转换为 Base64 编码
-                            sha: sha, // 文件的 SHA
-                            branch: branch // 目标分支
+                            message: '提交新反馈',
+                            content: updatedContentBase64,  // 使用更新后的内容
+                            sha: feedbackSha  // 使用当前的 sha 值
                         })
                     });
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.commit) {
-                        alert('反馈提交成功！');
-                        document.getElementById('suggestion-content').value = ''; // 清空输入框
-                    } else {
-                        alert('提交失败，请稍后再试！');
-                    }
-                })
-                .catch(error => {
-                    console.error('提交反馈时发生错误：', error);
-                    alert('发生错误，请稍后再试！');
-                });
-            } else {
-                alert('请输入反馈内容！');
-            }
+                } else {
+                    console.error('获取到的 feedback.txt 内容为空');
+                    throw new Error('获取到的 feedback.txt 内容为空');
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.commit) {
+                    alert('反馈提交成功!');
+                    document.getElementById('suggestion-content').value = ''; // 清空输入框
+                } else {
+                    console.error('反馈提交失败，未能获取到提交的 commit 信息');
+                    alert('反馈提交失败');
+                }
+            })
+            .catch(error => {
+                console.error('提交反馈时发生错误:', error);
+                alert('提交反馈时发生错误');
+            });
         }
 
-
+// 在页面加载时，首先获取反馈文件和点赞文件的 sha
+getFeedbackFileSha();
+getLikeFileSha();
 
 
     </script>
+
 
 </body>
 </html>
